@@ -5,6 +5,7 @@
 """
 
 import random
+
 import pygame
 
 # Константы для размеров поля и сетки:
@@ -30,7 +31,7 @@ SPEED = 20
 
 # Настройка окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Змейка')
+pygame.display.set_caption("Змейка")
 clock = pygame.time.Clock()
 
 
@@ -75,7 +76,7 @@ class Apple(GameObject):
             self.position[0] * GRID_SIZE,
             self.position[1] * GRID_SIZE,
             GRID_SIZE,
-            GRID_SIZE
+            GRID_SIZE,
         )
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
@@ -142,20 +143,14 @@ class Snake(GameObject):
         """Отрисовывает змейку на игровом поле и затирает след."""
         for position in self.positions:
             rect = pygame.Rect(
-                position[0] * GRID_SIZE,
-                position[1] * GRID_SIZE,
-                GRID_SIZE,
-                GRID_SIZE
+                position[0] * GRID_SIZE, position[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE
             )
             pygame.draw.rect(screen, self.body_color, rect)
             pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
         if self.last:
             last_rect = pygame.Rect(
-                self.last[0] * GRID_SIZE,
-                self.last[1] * GRID_SIZE,
-                GRID_SIZE,
-                GRID_SIZE
+                self.last[0] * GRID_SIZE, self.last[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE
             )
             pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
@@ -207,11 +202,11 @@ def main():
         apple.draw()
 
         score = snake.length - 1
-        score_text = font.render(f'Score: {score}', True, (255, 255, 255))
+        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (10, 10))
 
         pygame.display.update()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
