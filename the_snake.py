@@ -5,6 +5,7 @@
 """
 
 import random
+
 import pygame as pg
 
 # Константы для размеров поля и сетки:
@@ -34,7 +35,7 @@ SPEED: int = 20
 
 # Настройка окна:
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pg.display.set_caption("Змейка")
+pg.display.set_caption('Змейка')
 clock = pg.time.Clock()
 
 
@@ -44,19 +45,23 @@ class GameObject:
     DEFAULT_COLOR: tuple[int, int, int] = (255, 255, 255)
 
     def __init__(
-        self,
-        position: tuple[int, int] | None = None,
-        body_color: tuple[int, int, int] | None = None,
+            self,
+            position: tuple[int, int] | None = None,
+            body_color: tuple[int, int, int] | None = None
     ) -> None:
         """Инициализация базового игрового объекта."""
         if position is None:
             position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
         self.position = position
-        self.body_color = body_color if body_color is not None else self.DEFAULT_COLOR
+        self.body_color = (
+            body_color if body_color is not None else self.DEFAULT_COLOR
+        )
 
     def draw(self) -> None:
         """Абстрактный метод отрисовки объекта."""
-        raise NotImplementedError("Метод draw должен быть реализован в наследнике")
+        raise NotImplementedError(
+            'Метод draw должен быть реализован в наследнике'
+        )
 
 
 class Apple(GameObject):
@@ -65,9 +70,9 @@ class Apple(GameObject):
     APPLE_COLOR: tuple[int, int, int] = (255, 0, 0)
 
     def __init__(
-        self,
-        occupied_positions: list[tuple[int, int]] | None = None,
-        body_color: tuple[int, int, int] | None = None,
+            self,
+            occupied_positions: list[tuple[int, int]] | None = None,
+            body_color: tuple[int, int, int] | None = None
     ) -> None:
         """Инициализация яблока."""
         if body_color is None:
@@ -76,7 +81,8 @@ class Apple(GameObject):
         self.randomize_position(occupied_positions)
 
     def randomize_position(
-        self, occupied_positions: list[tuple[int, int]] | None
+            self,
+            occupied_positions: list[tuple[int, int]] | None
     ) -> None:
         """Устанавливает случайное положение яблока."""
         if occupied_positions is None:
@@ -107,17 +113,19 @@ class Snake(GameObject):
     SNAKE_COLOR: tuple[int, int, int] = (0, 255, 0)
 
     def __init__(
-        self,
-        body_color: tuple[int, int, int] | None = None,
-        grid_width: int | None = None,
-        grid_height: int | None = None,
+            self,
+            body_color: tuple[int, int, int] | None = None,
+            grid_width: int | None = None,
+            grid_height: int | None = None
     ) -> None:
         """Инициализация змейки в начальном состоянии."""
         if body_color is None:
             body_color = self.SNAKE_COLOR
         super().__init__(body_color=body_color)
         self.grid_width = grid_width if grid_width is not None else GRID_WIDTH
-        self.grid_height = grid_height if grid_height is not None else GRID_HEIGHT
+        self.grid_height = (
+            grid_height if grid_height is not None else GRID_HEIGHT
+        )
         self.reset()
 
     def reset(self) -> None:
@@ -168,14 +176,20 @@ class Snake(GameObject):
         """Отрисовывает змейку на игровом поле и затирает след."""
         for position in self.positions:
             rect = pg.Rect(
-                position[0] * GRID_SIZE, position[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE
+                position[0] * GRID_SIZE,
+                position[1] * GRID_SIZE,
+                GRID_SIZE,
+                GRID_SIZE
             )
             pg.draw.rect(screen, self.body_color, rect)
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
         if self.last:
             last_rect = pg.Rect(
-                self.last[0] * GRID_SIZE, self.last[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE
+                self.last[0] * GRID_SIZE,
+                self.last[1] * GRID_SIZE,
+                GRID_SIZE,
+                GRID_SIZE
             )
             pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
@@ -226,11 +240,11 @@ def main() -> None:
         apple.draw()
 
         score = snake.length - 1
-        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+        score_text = font.render(f'Score: {score}', True, (255, 255, 255))
         screen.blit(score_text, (10, 10))
 
         pg.display.update()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
