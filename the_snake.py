@@ -1,6 +1,8 @@
 """
 Игра 'Змейка' на Pygame.
+
 Змейка ползает по полю, ест яблоки и растет.
+
 При столкновении с собой игра начинается заново.
 """
 
@@ -17,6 +19,8 @@ GRID_HEIGHT: int = SCREEN_HEIGHT // GRID_SIZE
 
 # Аннотации типов:
 Pointer = tuple[int, int]
+Color = tuple[int, int, int]
+PositionsList = list[tuple[int, int]]
 
 # Направления движения:
 UP: Pointer = (0, -1)
@@ -25,65 +29,52 @@ LEFT: Pointer = (-1, 0)
 RIGHT: Pointer = (1, 0)
 
 # Цвета:
-BOARD_BACKGROUND_COLOR: tuple[int, int, int] = (0, 0, 0)
-BORDER_COLOR: tuple[int, int, int] = (93, 216, 228)
-APPLE_COLOR: tuple[int, int, int] = (255, 0, 0)
-SNAKE_COLOR: tuple[int, int, int] = (0, 255, 0)
+BOARD_BACKGROUND_COLOR: Color = (0, 0, 0)
+BORDER_COLOR: Color = (93, 216, 228)
+APPLE_COLOR: Color = (255, 0, 0)
+SNAKE_COLOR: Color = (0, 255, 0)
 
 # Скорость:
 SPEED: int = 20
 
 # Настройка окна:
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pg.display.set_caption('Змейка')
+pg.display.set_caption("Змейка")
 clock = pg.time.Clock()
 
 
 class GameObject:
     """Базовый класс для всех игровых объектов."""
 
-    DEFAULT_COLOR: tuple[int, int, int] = (255, 255, 255)
+    DEFAULT_COLOR: Color = (255, 255, 255)
 
     def __init__(
-            self,
-            position: tuple[int, int] | None = None,
-            body_color: tuple[int, int, int] | None = None
+        self, position: Pointer | None = None, body_color: Color = DEFAULT_COLOR
     ) -> None:
         """Инициализация базового игрового объекта."""
         if position is None:
             position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
         self.position = position
-        self.body_color = (
-            body_color if body_color is not None else self.DEFAULT_COLOR
-        )
+        self.body_color = body_color
 
     def draw(self) -> None:
         """Абстрактный метод отрисовки объекта."""
-        raise NotImplementedError(
-            'Метод draw должен быть реализован в наследнике'
-        )
+        raise NotImplementedError("Метод draw должен быть реализован в наследнике")
 
 
 class Apple(GameObject):
     """Класс яблока, которое ест змейка."""
 
-    APPLE_COLOR: tuple[int, int, int] = (255, 0, 0)
-
     def __init__(
-            self,
-            occupied_positions: list[tuple[int, int]] | None = None,
-            body_color: tuple[int, int, int] | None = None
+        self,
+        occupied_positions: PositionsList | None = None,
+        body_color: Color = APPLE_COLOR,
     ) -> None:
         """Инициализация яблока."""
-        if body_color is None:
-            body_color = self.APPLE_COLOR
         super().__init__(body_color=body_color)
         self.randomize_position(occupied_positions)
 
-    def randomize_position(
-            self,
-            occupied_positions: list[tuple[int, int]] | None
-    ) -> None:
+    def randomize_position(self, occupied_positions: PositionsList | None) -> None:
         """Устанавливает случайное положение яблока."""
         if occupied_positions is None:
             occupied_positions = []
@@ -110,35 +101,29 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Класс змейки, управляемой игроком."""
 
-    SNAKE_COLOR: tuple[int, int, int] = (0, 255, 0)
-
     def __init__(
-            self,
-            body_color: tuple[int, int, int] | None = None,
-            grid_width: int | None = None,
-            grid_height: int | None = None
+        self,
+        body_color: Color = SNAKE_COLOR,
+        grid_width: int | None = None,
+        grid_height: int | None = None,
     ) -> None:
         """Инициализация змейки в начальном состоянии."""
-        if body_color is None:
-            body_color = self.SNAKE_COLOR
         super().__init__(body_color=body_color)
         self.grid_width = grid_width if grid_width is not None else GRID_WIDTH
-        self.grid_height = (
-            grid_height if grid_height is not None else GRID_HEIGHT
-        )
+        self.grid_height = grid_height if grid_height is not None else GRID_HEIGHT
         self.reset()
 
     def reset(self) -> None:
         """Сбрасывает змейку в начальное состояние."""
         center_x = self.grid_width // 2
         center_y = self.grid_height // 2
-        self.positions: list[tuple[int, int]] = [(center_x, center_y)]
+        self.positions: PositionsList = [(center_x, center_y)]
         self.length: int = 1
         self.direction: Pointer = RIGHT
         self.next_direction: Pointer | None = None
-        self.last: tuple[int, int] | None = None
+        self.last: Pointer | None = None
 
-    def get_head_position(self) -> tuple[int, int]:
+    def get_head_position(self) -> Pointer:
         """Возвращает позицию головы змейки."""
         return self.positions[0]
 
@@ -176,20 +161,14 @@ class Snake(GameObject):
         """Отрисовывает змейку на игровом поле и затирает след."""
         for position in self.positions:
             rect = pg.Rect(
-                position[0] * GRID_SIZE,
-                position[1] * GRID_SIZE,
-                GRID_SIZE,
-                GRID_SIZE
+                position[0] * GRID_SIZE, position[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE
             )
             pg.draw.rect(screen, self.body_color, rect)
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
         if self.last:
             last_rect = pg.Rect(
-                self.last[0] * GRID_SIZE,
-                self.last[1] * GRID_SIZE,
-                GRID_SIZE,
-                GRID_SIZE
+                self.last[0] * GRID_SIZE, self.last[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE
             )
             pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
@@ -240,11 +219,11 @@ def main() -> None:
         apple.draw()
 
         score = snake.length - 1
-        score_text = font.render(f'Score: {score}', True, (255, 255, 255))
+        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (10, 10))
 
         pg.display.update()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
