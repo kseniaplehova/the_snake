@@ -39,7 +39,7 @@ SPEED: int = 20
 
 # Настройка окна:
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pg.display.set_caption("Змейка")
+pg.display.set_caption('Змейка')
 clock = pg.time.Clock()
 
 
@@ -49,7 +49,9 @@ class GameObject:
     DEFAULT_COLOR: Color = (255, 255, 255)
 
     def __init__(
-        self, position: Pointer | None = None, body_color: Color = DEFAULT_COLOR
+            self,
+            position: Pointer | None = None,
+            body_color: Color = DEFAULT_COLOR
     ) -> None:
         """Инициализация базового игрового объекта."""
         if position is None:
@@ -59,22 +61,27 @@ class GameObject:
 
     def draw(self) -> None:
         """Абстрактный метод отрисовки объекта."""
-        raise NotImplementedError("Метод draw должен быть реализован в наследнике")
+        raise NotImplementedError(
+            'Метод draw должен быть реализован в наследнике'
+        )
 
 
 class Apple(GameObject):
     """Класс яблока, которое ест змейка."""
 
     def __init__(
-        self,
-        occupied_positions: PositionsList | None = None,
-        body_color: Color = APPLE_COLOR,
+            self,
+            occupied_positions: PositionsList | None = None,
+            body_color: Color = APPLE_COLOR
     ) -> None:
         """Инициализация яблока."""
         super().__init__(body_color=body_color)
         self.randomize_position(occupied_positions)
 
-    def randomize_position(self, occupied_positions: PositionsList | None) -> None:
+    def randomize_position(
+            self,
+            occupied_positions: PositionsList | None
+    ) -> None:
         """Устанавливает случайное положение яблока."""
         if occupied_positions is None:
             occupied_positions = []
@@ -102,15 +109,17 @@ class Snake(GameObject):
     """Класс змейки, управляемой игроком."""
 
     def __init__(
-        self,
-        body_color: Color = SNAKE_COLOR,
-        grid_width: int | None = None,
-        grid_height: int | None = None,
+            self,
+            body_color: Color = SNAKE_COLOR,
+            grid_width: int | None = None,
+            grid_height: int | None = None
     ) -> None:
         """Инициализация змейки в начальном состоянии."""
         super().__init__(body_color=body_color)
         self.grid_width = grid_width if grid_width is not None else GRID_WIDTH
-        self.grid_height = grid_height if grid_height is not None else GRID_HEIGHT
+        self.grid_height = (
+            grid_height if grid_height is not None else GRID_HEIGHT
+        )
         self.reset()
 
     def reset(self) -> None:
@@ -161,14 +170,20 @@ class Snake(GameObject):
         """Отрисовывает змейку на игровом поле и затирает след."""
         for position in self.positions:
             rect = pg.Rect(
-                position[0] * GRID_SIZE, position[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE
+                position[0] * GRID_SIZE,
+                position[1] * GRID_SIZE,
+                GRID_SIZE,
+                GRID_SIZE
             )
             pg.draw.rect(screen, self.body_color, rect)
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
         if self.last:
             last_rect = pg.Rect(
-                self.last[0] * GRID_SIZE, self.last[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE
+                self.last[0] * GRID_SIZE,
+                self.last[1] * GRID_SIZE,
+                GRID_SIZE,
+                GRID_SIZE
             )
             pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
@@ -219,11 +234,13 @@ def main() -> None:
         apple.draw()
 
         score = snake.length - 1
-        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+        score_text = font.render(
+            f'Score: {score}', True, (255, 255, 255)
+        )
         screen.blit(score_text, (10, 10))
 
         pg.display.update()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
